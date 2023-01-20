@@ -1,0 +1,16 @@
+import json
+ 
+import boto3
+ 
+from botocore.exception import Clienterror
+ 
+def db_insert_function(db_record):
+        db = boto3.resource('dynamodb')
+   
+        table = db.Table('MyTable')
+       
+        try:
+            with table.batch_writer() as batch:
+                batch.put_item(db_record)
+        except Clienterror as e:
+            print (e)
