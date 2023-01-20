@@ -1,0 +1,27 @@
+import json
+import boto3
+from pprint import pprint
+import insert_db
+from botocore.exception import Clienterror
+ 
+def lambda_handler(event, context):
+    instance_id = event['detail']['instance-id']
+    client = boto3.client("ec2")
+    response = client.describe_instances(InstanceIds = [instance_id])['Reservations']
+   
+    for count in response:
+        y = count['Instances']
+   
+    
+        for i in y:
+            print (i)
+           
+            db_record = {
+                "InstanceID" : i["InstanceId"],
+                "InstanceStatus" : i['State']['Name'],
+                "AZ" : i["Placement"]["AvailabilityZone"],
+                "Instancetype" : i['InstanceType'],
+                "event_trigger_time" : event['time']
+            }
+       
+        insert_db.db_insert_function(db_record)
